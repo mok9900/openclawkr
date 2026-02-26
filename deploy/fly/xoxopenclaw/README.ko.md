@@ -44,21 +44,7 @@ fly ssh console --app xoxopenclaw
 
 ```bash
 cd /workspace/openclawkr
-
-KEEP_LIST=$'deploy/fly/xoxopenclaw\nfly.toml\nfly.private.toml\nDockerfile\nDockerfile.sandbox\nDockerfile.sandbox-common\nDockerfile.sandbox-browser\n.git\n.gitignore'
-
-declare -A keep_map
-while IFS= read -r path; do
-  [[ -z "$path" ]] && continue
-  keep_map["$path"]=1
-done <<< "$KEEP_LIST"
-
-shopt -s dotglob nullglob
-for item in * .*; do
-  [[ "$item" == "." || "$item" == ".." ]] && continue
-  [[ -n "${keep_map[$item]:-}" ]] && continue
-  rm -rf -- "$item"
-done
+./deploy/fly/xoxopenclaw/prune-to-fly.sh
 ```
 
 ## 보안 메모
