@@ -1,31 +1,46 @@
 # xoxopenclaw Fly.io 초기 세팅 (새 도화지)
 
-요청한 스펙으로 바로 시작할 수 있게 준비된 전용 템플릿입니다.
+요청 스펙:
 
 - 앱 이름: `xoxopenclaw`
 - 리전: `nrt`
 - 메모리: `131072mb`
-- VM 사이즈: `performance-16x`
+- VM: `performance-16x`
 - 볼륨: `500GB`
 
-## 1) Codespaces에서 한 번에 실행 (복붙용)
+## 1) env 파일에 토큰 저장
 
-> 아래 블록은 **토큰을 파일에 저장하지 않고** 현재 셸 세션에서만 사용합니다.
+```bash
+cd /workspace/openclawkr/deploy/fly/xoxopenclaw
+cp .env.example .env
+```
+
+`.env`에 실제 값 입력:
+
+```dotenv
+FLY_API_TOKEN=...
+DISCORD_BOT_TOKEN=...
+SLACK_BOT_TOKEN=...
+GEMINI_API_KEY=...
+ANTHROPIC_API_KEY=...
+```
+
+## 2) Codespaces 전체 복붙 실행
 
 ```bash
 cd /workspace/openclawkr
-
-export FLY_API_TOKEN='<YOUR_FLY_TOKEN>'
-export DISCORD_BOT_TOKEN='<YOUR_DISCORD_BOT_TOKEN>'
-export ANTHROPIC_API_KEY='<YOUR_ANTHROPIC_API_KEY>'
-
-fly auth token >/dev/null
 ./deploy/fly/xoxopenclaw/bootstrap.sh
 ```
 
-## 2) 진짜로 Fly 전용 트리만 남기고 싶을 때 (파괴적)
+## 3) 초기 확인
 
-아래 명령은 현재 레포에서 Fly 배포 관련 최소 파일만 남기고 삭제합니다. 되돌리기 어렵습니다.
+```bash
+fly status --app xoxopenclaw
+fly logs --app xoxopenclaw
+fly ssh console --app xoxopenclaw
+```
+
+## 4) Fly 전용 트리만 남기기 (파괴적, 선택)
 
 ```bash
 cd /workspace/openclawkr
@@ -46,15 +61,7 @@ for item in * .*; do
 done
 ```
 
-## 3) 초기 확인 명령
-
-```bash
-fly status --app xoxopenclaw
-fly logs --app xoxopenclaw
-fly ssh console --app xoxopenclaw
-```
-
 ## 보안 메모
 
-- 이미 공유한 Fly API 토큰은 즉시 폐기(rotate) 권장.
-- 새 토큰 발급 후 다시 로그인/배포하세요.
+- `.env`는 `deploy/fly/xoxopenclaw/.gitignore`로 커밋 제외 처리됨.
+- 이미 노출된 토큰은 즉시 rotate 권장.
