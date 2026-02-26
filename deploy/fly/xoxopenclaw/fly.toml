@@ -1,0 +1,31 @@
+app = "xoxopenclaw"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  OPENCLAW_PREFER_PNPM = "1"
+  OPENCLAW_STATE_DIR = "/data"
+  OPENCLAW_GATEWAY_PORT = "3000"
+  NODE_OPTIONS = "--max-old-space-size=12288"
+
+[processes]
+  app = "node dist/index.js gateway --allow-unconfigured --bind lan --port 3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "performance-16x"
+  memory = "131072mb"
+
+[mounts]
+  source = "openclaw_data"
+  destination = "/data"
